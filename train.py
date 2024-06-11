@@ -13,43 +13,27 @@ import torch
 import time
 import matplotlib.pyplot as plt
 import random
-# from module.utils.vgg16 import VGG16FeatureExtractor
 import utils
 
 if __name__ == "__main__":
     
     print("Load Config")
-    # data_root = config.hdr_root
-    data_root = "/work/u8083200/Thesis/datasets/SingleHDR_training_data"
-    # data_root = "/work/u8083200/Thesis/datasets/SingleHDR_training_data"
+    data_root = config.DATA_ROOT
     batch_size = config.BATCH_SIZE
     epochs = config.EPOCH
     aug = config.AUG
     exposure_time = config.EXPOSURE_TIME
     
-    # weight_name = config.SPATIAL_WEIGHT_NAME
     weight_name = config.WEIGHT_NAME
     result_save_path = os.path.join(config.RESULT_SAVE_PATH)
     weight_save_path = os.path.join(config.WEIGHT_SAVE_PATH) 
     learning_rate = config.LEARNING_RATE
     device = config.DEVICE
     
-    ev_normalize = config.EV_NORMALIZE
-    ev_norm_ldr = config.EV_NORM_LDR
-    ldr_domain = config.LDR_DOMAIN
-    ev = config.EV
-    ev_log = config.EV_focus
-    p_conv = config.P_CONV
-    tanh = config.TANH
     result_root = os.path.join(result_save_path, weight_name)
     
     print("\nWEIGHT_NAME: {}".format(weight_name))
     print("AUG: {}".format(aug))
-    print("TANH: {}".format(tanh))
-    print("EV_NORMALIZE: {}".format(ev_normalize))
-    print("EV_NORM_LDR: {}".format(ev_norm_ldr))
-    print("LDR_DOMAIN: {}".format(ldr_domain))
-    print("EV: {}\n".format(ev))
     
     # ----- Load Data -----
     print("Load Data...")
@@ -119,7 +103,6 @@ if __name__ == "__main__":
             os.mkdir(os.path.join(result_root, "val"))
     
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-    # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=5e-1)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=5e-1, patience=5, verbose=True)
     
     writer = SummaryWriter("runs/" + weight_name + "_log_" + time.ctime(time.time()), 
@@ -128,7 +111,6 @@ if __name__ == "__main__":
     loss_dir = {}
     
     loss_weight = config.loss_weight
-    loss_config = config.loss_config
     fig, ax = plt.subplots()
     bars = ax.bar(*zip(*loss_weight.items()))
     ax.bar_label(bars)

@@ -9,3 +9,4 @@ def transfer_to_cuda_and_float32(tensor_dict):
 def merge_hdr(images: dict):
     merge_debevec = cv2.createMergeDebevec()
     return merge_debevec.process(images['images'], images['times'])
+
