@@ -1,13 +1,13 @@
 DATA_ROOT = "/work/u8083200/Thesis/datasets/SingleHDR_training_data"
+TEST_DATA_ROOT = "/work/u8083200/Thesis/datasets/ori_test_dataset"
 
-WEIGHT_NAME = "MEGHDR"
+WEIGHT_NAME = "MEGHDR_ev2"
+
 # Training
 EPOCH = 61
 BATCH_SIZE = 6
 
 AUG = True
-
-EXPOSURE_TIME = {"t_1": 1.0, "t_2": 2.0}
 
 loss_weight = {
     "representation_loss": 1e0,
@@ -16,9 +16,10 @@ loss_weight = {
     "tv_loss": 5e-4,
     }
     
+
 RESULT_SAVE_PATH = "/work/u8083200/Thesis/SOTA/MEGHDR/result"
 WEIGHT_SAVE_PATH = "/work/u8083200/Thesis/SOTA/MEGHDR/weight"
-
+VAL_RESULT_SAVE_PATH = "/work/u8083200/Thesis/datasets/" + WEIGHT_NAME
 
 LEARNING_RATE = 1e-4
 DEVICE = "cuda"

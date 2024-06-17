@@ -28,8 +28,7 @@ def _get_crf_list():
 train_crf_list, test_crf_list= _get_crf_list()
 class dataset(Dataset):
     def __init__(self, hdr_path=None, ldr_path=None, crf_list=train_crf_list,
-                 aug=True, aug_ev=4, image_size=512, stage=1, sigma=2.0,
-                 exposure_time = {"t_1": 1, "t_2": 2}):
+                 aug=True, aug_ev=4, image_size=512, stage=1, sigma=2.0):
         self.hdr_path = hdr_path
         self.ldr_path = ldr_path
         self.crf_list = crf_list
@@ -38,7 +37,6 @@ class dataset(Dataset):
         self.image_size = image_size
         self.stage = stage
         self.sigma = sigma
-        self.exposure_time = exposure_time
         '''
         Stage
         1: Transfer Domain Stage
@@ -92,8 +90,11 @@ class dataset(Dataset):
             return{"Target": transforms.functional.crop(torch.from_numpy(np.transpose(hdr_image, (2, 0, 1))), i, j, h, w),
                    "Source": transforms.functional.crop(torch.from_numpy(np.transpose(ldr_image, (2, 0, 1))), i, j, h, w)}
         # -----Refinement-----
-        
-        pair_hdr_image = hdr_image * self.exposure_time["t_2"] / self.exposure_time["t_1"] # Pair HDR image
+        exposure_time = {
+            "t_1": 1.0,
+            "t_2": np.random.uniform(1, 4)
+        }
+        pair_hdr_image = hdr_image * exposure_time["t_2"] / exposure_time["t_1"] # Pair HDR image
         
         # -----Hallucination-----
         hdr_clip, _, _ = self.dynamic_clipping(hdr_image)
@@ -140,7 +141,8 @@ class dataset(Dataset):
                            },
                 # "over": transforms.functional.crop(torch.from_numpy(np.transpose(over_exposure_mask, (2, 0, 1))), i, j, h, w),
                 # "under": transforms.functional.crop(torch.from_numpy(np.transpose(under_exposure_mask, (2, 0, 1))), i, j, h, w),
-                "exposure_time": self.exposure_time 
+                "exposure_time_t_1": exposure_time["t_1"],
+                "exposure_time_t_2": exposure_time["t_2"] 
                 }
         
         # Tone Mapping Section

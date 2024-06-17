@@ -22,7 +22,6 @@ if __name__ == "__main__":
     batch_size = config.BATCH_SIZE
     epochs = config.EPOCH
     aug = config.AUG
-    exposure_time = config.EXPOSURE_TIME
     
     weight_name = config.WEIGHT_NAME
     result_save_path = os.path.join(config.RESULT_SAVE_PATH)
@@ -138,7 +137,10 @@ if __name__ == "__main__":
         for batch_idx, imgs in enumerate(tqdm_bar):
             model.train()
             source = imgs["source"]
-            exposure_time = imgs["exposure_time"]
+            exposure_time = {
+                "t_1": imgs["exposure_time_t_1"],
+                "t_2": imgs["exposure_time_t_2"]
+                }
             
             source = utils.transfer_to_cuda_and_float32(source)
             exposure_time = utils.transfer_to_cuda_and_float32(exposure_time)
@@ -202,7 +204,10 @@ if __name__ == "__main__":
                 
                 with torch.no_grad():
                     source = imgs["source"]
-                    exposure_time = imgs["exposure_time"]
+                    exposure_time = {
+                        "t_1": imgs["exposure_time_t_1"],
+                        "t_2": imgs["exposure_time_t_2"]
+                        }
                     
                     source = utils.transfer_to_cuda_and_float32(source)
                     exposure_time = utils.transfer_to_cuda_and_float32(exposure_time)
