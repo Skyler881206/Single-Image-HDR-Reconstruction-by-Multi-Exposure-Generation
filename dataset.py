@@ -134,15 +134,12 @@ class dataset(Dataset):
         # ------Edge------        
         if self.stage == 4: # Refinement Stage
             return {
-                # "target": transforms.functional.crop(torch.from_numpy(np.transpose(hdr_image, (2, 0, 1))), i, j, h, w),
                 "source": {
                     "x_1": transforms.functional.crop(torch.from_numpy(np.transpose(quantized_jpeg_float, (2, 0, 1))), i, j, h, w),
-                    "x_2": transforms.functional.crop(torch.from_numpy(np.transpose(pair_quantized_jpeg_float, (2, 0, 1))), i, j, h, w)
-                           },
-                # "over": transforms.functional.crop(torch.from_numpy(np.transpose(over_exposure_mask, (2, 0, 1))), i, j, h, w),
-                # "under": transforms.functional.crop(torch.from_numpy(np.transpose(under_exposure_mask, (2, 0, 1))), i, j, h, w),
-                "exposure_time_t_1": exposure_time["t_1"],
-                "exposure_time_t_2": exposure_time["t_2"] 
+                    "x_2": transforms.functional.crop(torch.from_numpy(np.transpose(pair_quantized_jpeg_float, (2, 0, 1))), i, j, h, w),
+                    "t_1": torch.tensor(exposure_time["t_1"]),
+                    "t_2": torch.tensor(exposure_time["t_2"]) 
+                    },
                 }
         
         # Tone Mapping Section

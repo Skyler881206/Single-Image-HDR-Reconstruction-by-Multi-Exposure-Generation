@@ -75,7 +75,7 @@ if __name__ == "__main__":
     val_dataloader = DataLoader(dataset.dataset(Val_HDR, stage=4, image_size=512, aug=aug), shuffle=True, batch_size=batch_size)
     
     print("Set Model")
-    model = module.EDNet(exposure_time=exposure_time)
+    model = module.EDNet()
     model.to(device)
     
     config.set_random_seed(2454)
@@ -137,13 +137,8 @@ if __name__ == "__main__":
         for batch_idx, imgs in enumerate(tqdm_bar):
             model.train()
             source = imgs["source"]
-            exposure_time = {
-                "t_1": imgs["exposure_time_t_1"],
-                "t_2": imgs["exposure_time_t_2"]
-                }
             
             source = utils.transfer_to_cuda_and_float32(source)
-            exposure_time = utils.transfer_to_cuda_and_float32(exposure_time)
             
             optimizer.zero_grad()
             
@@ -155,8 +150,8 @@ if __name__ == "__main__":
                 "encode_feature": {"x_1": up_encode_feature, "x_2": under_encode_feature},
                 "predict": {"x_1": under_output, "x_2": up_output},
                 "gt": {"x_1": source["x_1"], "x_2": source["x_2"]},
-                "exposure_time": exposure_time
-            }
+                "exposure_time": {"t_1": source["t_1"], "t_2": source["t_2"]}
+                }
 
             loss, loss_dict = loss_fn(predict_dict,
                                       loss_weight)
@@ -204,13 +199,8 @@ if __name__ == "__main__":
                 
                 with torch.no_grad():
                     source = imgs["source"]
-                    exposure_time = {
-                        "t_1": imgs["exposure_time_t_1"],
-                        "t_2": imgs["exposure_time_t_2"]
-                        }
                     
                     source = utils.transfer_to_cuda_and_float32(source)
-                    exposure_time = utils.transfer_to_cuda_and_float32(exposure_time)
                     
                     optimizer.zero_grad()
                     
@@ -222,8 +212,8 @@ if __name__ == "__main__":
                         "encode_feature": {"x_1": up_encode_feature, "x_2": under_encode_feature},
                         "predict": {"x_1": under_output, "x_2": up_output},
                         "gt": {"x_1": source["x_1"], "x_2": source["x_2"]},
-                        "exposure_time": exposure_time
-                    }
+                        "exposure_time": {"t_1": source["t_1"], "t_2": source["t_2"]}
+                        }
 
                     loss, loss_dict = loss_fn(predict_dict,
                                               loss_weight)

@@ -182,10 +182,8 @@ class Unet_decoder(nn.Module):
         return feature
 
 class EDNet(nn.Module):
-    def __init__(self, exposure_time = {"t_1": 1, "t_2": 2}):
+    def __init__(self):
         super(EDNet, self).__init__()
-        self.exposure_time = exposure_time
-        
         self.HDREncNet = nn.Sequential(
             Unet_encoder(3, 16, 256),
             Unet_decoder(16, 256, res_type = "add"),
@@ -211,20 +209,20 @@ class EDNet(nn.Module):
         if train_section == "train_up":
             Encode_feature = self.HDREncNet(x["x_1"] * self.over_under_mask(x["x_1"]))
             Encode_feature = (Encode_feature + x["x_1"] + 1.0) / 3.0
-            Up_feature = self.UpexosureNet(Encode_feature * (self.exposure_time["t_2"] / self.exposure_time["t_1"]))
+            Up_feature = self.UpexosureNet(Encode_feature * (x["t_2"] / x["t_1"]).view(-1, 1, 1, 1))
             return (Encode_feature, Up_feature)
         
         elif train_section == "train_under":
             Encode_feature = self.HDREncNet(x["x_2"] * self.over_under_mask(x["x_2"]))
             Encode_feature = (Encode_feature + x["x_2"] + 1.0) / 3.0
-            Under_feature = self.UnderexposureNet(Encode_feature * (self.exposure_time["t_1"] / self.exposure_time["t_2"]))
+            Under_feature = self.UnderexposureNet(Encode_feature * (x["t_1"] / x["t_2"]).view(-1, 1, 1, 1))
             return (Encode_feature, Under_feature)
         
         elif train_section == "val":
             Encode_feature = self.HDREncNet(x * self.over_under_mask(x))
             Encode_feature = (Encode_feature + x + 1.0) / 3.0
-            Up_feature = self.UpexosureNet(Encode_feature * (self.exposure_time["t_2"] / self.exposure_time["t_1"]))
-            Under_feature = self.UnderexposureNet(Encode_feature * (self.exposure_time["t_1"] / self.exposure_time["t_2"]))
+            Up_feature = self.UpexosureNet(Encode_feature * (x["t_2"] / x["t_1"]).view(-1, 1, 1, 1))
+            Under_feature = self.UnderexposureNet(Encode_feature * (x["t_1"] / x["t_2"]).view(-1, 1, 1, 1))
             return (Encode_feature, Up_feature, Under_feature)
         
         else:
