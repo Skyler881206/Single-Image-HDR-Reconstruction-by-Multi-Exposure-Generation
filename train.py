@@ -224,7 +224,7 @@ if __name__ == "__main__":
                             loss_dir[key] = loss_dict[key].item()
                             continue
                 
-                    loss_dir[key] += loss_dict[key].item()
+                        loss_dir[key] += loss_dict[key].item()
                         
                     if (val_iteration % 59 == 0):
                         writer.add_image("val_Source/Source_x1", dataset.eval_image(source["x_1"]), val_iteration)
