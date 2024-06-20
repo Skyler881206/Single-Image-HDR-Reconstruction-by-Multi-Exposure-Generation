@@ -68,8 +68,8 @@ if __name__ == "__main__":
                 continue
     
     random.seed(2454)
-    Train_HDR = hdr_path
-    Val_HDR = val_path
+    Train_HDR = hdr_path[:int(len(hdr_path) * 0.9)]
+    Val_HDR = hdr_path[int(len(hdr_path) * 0.9):]
     
     train_dataloader = DataLoader(dataset.dataset(Train_HDR, stage=4, image_size=512, aug=aug), shuffle=True, batch_size=batch_size)
     val_dataloader = DataLoader(dataset.dataset(Val_HDR, stage=4, image_size=512, aug=aug), shuffle=True, batch_size=batch_size)
@@ -91,7 +91,6 @@ if __name__ == "__main__":
                     max_epoch = int(file[:-4])
                     
         model.load_state_dict(torch.load(os.path.join(os.path.join(weight_save_path, weight_name), str(max_epoch) + ".pth")))
-        learning_rate = learning_rate * pow(0.99, max_epoch)
         weight_name = weight_name + "_conti"
         
         result_root = os.path.join(result_save_path, weight_name)

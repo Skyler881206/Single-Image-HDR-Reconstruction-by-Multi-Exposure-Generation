@@ -219,8 +219,8 @@ class EDNet(nn.Module):
             return (Encode_feature, Under_feature)
         
         elif train_section == "val":
-            Encode_feature = self.HDREncNet(x * self.over_under_mask(x))
-            Encode_feature = (Encode_feature + x + 1.0) / 3.0
+            Encode_feature = self.HDREncNet(x["x"] * self.over_under_mask(x["x"]))
+            Encode_feature = (Encode_feature + x["x"] + 1.0) / 3.0
             Up_feature = self.UpexosureNet(Encode_feature * (x["t_2"] / x["t_1"]).view(-1, 1, 1, 1))
             Under_feature = self.UnderexposureNet(Encode_feature * (x["t_1"] / x["t_2"]).view(-1, 1, 1, 1))
             return (Encode_feature, Up_feature, Under_feature)

@@ -502,7 +502,8 @@ def eval_image(images, log = None, max_value = None, file_name = None,mu = 10): 
 
     return concat_image # For tensorboard add_image
 
-def save_hdr_image(hdr_image, file_name): # Input_shape: (3, H, W), BGR
+def save_hdr_image(hdr_image, file_name): # Input_shape: (1, 3, H, W), BGR
+    hdr_image = torch.squeeze(hdr_image) # Remove first dim -> (3, H, W)
     hdr_image = torch.permute(hdr_image, (1, 2, 0)) # (3, H, W) -> (H, W, 3)
     hdr_image = hdr_image.detach().cpu().numpy()
     
